@@ -1,0 +1,44 @@
+<?php
+
+namespace App\Actions\Fortify;
+
+use App\Concerns\PasswordValidationRules;
+use App\Concerns\ProfileValidationRules;
+use App\Models\User;
+use App\Rules\TurnstileRule;
+use App\Services\EntitlementService;
+use Illuminate\Support\Facades\Validator;
+use Laravel\Fortify\Contracts\CreatesNewUsers;
+
+class CreateNewUser implements CreatesNewUsers
+{
+    use PasswordValidationRules, ProfileValidationRules;
+
+    /**
+     * Validate and create a newly registered user.
+     *
+     * @param  array<string, string>  $input
+     */
+    public function create(array $input): User
+    {
+        Validator::make($input, [
+            ...$this->profileRules(),
+            'password' => $this->passwordRules(),
+            'cf-turnstile-response' => app()->environment('testing') ? [] : ['required', new TurnstileRule],
+        ], [
+            'cf-turnstile-response.required' => 'Verifikasi Turnstile diperlukan.',
+        ])->validate();
+
+        $user = User::create([
+            'name' => $input['name'],
+            'email' => $input['email'],
+            'password' => $input['password'],
+        ]);
+
+        // Merge guest orders and grant entitlements
+        $entitlementService = app(EntitlementService::class);
+        $entitlementService->mergeGuestOrders($user);
+
+        return $user;
+    }
+}
