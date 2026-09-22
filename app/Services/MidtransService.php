@@ -103,11 +103,11 @@ class MidtransService
                     $order->update(['status' => 'pending']);
                 } elseif ($fraudStatus == 'accept') {
                     $order->update(['status' => 'paid', 'paid_at' => now()]);
-                    app(\App\Services\EntitlementService::class)->grantForOrder($order);
+                    app(EntitlementService::class)->grantForOrder($order);
                 }
             } elseif ($transactionStatus == 'settlement') {
                 $order->update(['status' => 'paid', 'paid_at' => now()]);
-                app(\App\Services\EntitlementService::class)->grantForOrder($order);
+                app(EntitlementService::class)->grantForOrder($order);
             } elseif ($transactionStatus == 'cancel' || $transactionStatus == 'deny' || $transactionStatus == 'expire') {
                 $order->update(['status' => 'failed']);
             } elseif ($transactionStatus == 'pending') {

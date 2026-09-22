@@ -1,7 +1,7 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { Plus, Edit, Trash2, Search } from 'lucide-react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import AdminLayout from '@/layouts/AdminLayout';
+import { PageHeader } from '@/components/page-header';
 import { useState } from 'react';
 import admin from '@/routes/admin';
 
@@ -23,60 +23,56 @@ export default function CouponsIndex({ coupons, filters }: { coupons: any, filte
         }
     };
 
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Kupon Diskon', href: admin.coupons.index() },
+    ];
+
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={breadcrumbs}>
             <Head title="Kupon Diskon | Admin" />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: admin.dashboard() },
-                    { title: 'Kupon Diskon', href: '#' },
-                ]}
-            />
-            
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 lg:p-10">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-7xl">
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2">Kupon Diskon</h1>
-                        <p className="text-lg text-zinc-500 dark:text-zinc-400">Kelola kupon promosi dan potongan harga pelanggan.</p>
-                    </div>
 
-                    <Link
-                        href={admin.coupons.create()}
-                        className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-                    >
-                        <Plus className="mr-2 h-5 w-5" />
-                        Buat Kupon
-                    </Link>
-                </div>
+            <PageHeader
+                title="Kupon Diskon"
+                description="Kelola kupon promosi dan potongan harga pelanggan."
+            >
+                <Link
+                    href={admin.coupons.create()}
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-zinc-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 transition-colors"
+                >
+                    <Plus className="size-4" />
+                    Buat Kupon
+                </Link>
+            </PageHeader>
 
-                <div className="flex flex-col sm:flex-row gap-4 items-end max-w-7xl mt-4">
-                    <form onSubmit={handleSearch} className="flex flex-1 gap-4 w-full">
-                        <div className="flex-1 min-w-0">
-                            <label htmlFor="search" className="sr-only">Cari</label>
-                            <div className="relative">
-                                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-                                    <Search className="h-5 w-5 text-zinc-400" />
-                                </div>
-                                <input
-                                    id="search"
-                                    type="text"
-                                    value={search}
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    placeholder="Cari kode kupon atau deskripsi..."
-                                    className="block w-full rounded-md border-0 py-2.5 pl-10 text-zinc-900 ring-1 ring-inset ring-zinc-300 placeholder:text-zinc-400 focus:ring-2 focus:ring-inset focus:ring-primary sm:text-sm sm:leading-6 dark:bg-zinc-900 dark:text-white dark:ring-border"
-                                />
-                            </div>
+            {/* Filter & Search Toolbar */}
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 p-4 shadow-2xs">
+                <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-3 items-center">
+                    <div className="relative flex-1 w-full">
+                        <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                            <Search className="size-4 text-zinc-400" />
                         </div>
-                        <button
-                            type="submit"
-                            className="inline-flex items-center justify-center rounded-md bg-zinc-900 px-4 py-2.5 text-sm font-medium text-zinc-50 shadow-sm hover:bg-zinc-800 dark:bg-zinc-50 dark:text-zinc-900 dark:hover:bg-zinc-200"
-                        >
-                            Cari
-                        </button>
-                    </form>
-                </div>
+                        <input
+                            id="search"
+                            name="search"
+                            type="text"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                            placeholder="Cari kode kupon atau deskripsi..."
+                            className="block w-full rounded-xl border border-border/70 bg-zinc-50/50 dark:bg-zinc-800/50 py-2 pl-9 pr-3 text-sm text-zinc-900 dark:text-white placeholder:text-zinc-400 focus:border-primary focus:bg-white dark:focus:bg-zinc-900 focus:outline-hidden focus:ring-2 focus:ring-primary/20 transition-all"
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-zinc-800 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100 transition-colors shrink-0"
+                    >
+                        <Search className="size-3.5" />
+                        <span>Cari</span>
+                    </button>
+                </form>
+            </div>
 
-                <div className="bento-card border-none ring-1 ring-border shadow-sm flex flex-col min-h-0 max-w-7xl">
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs overflow-hidden">
                     <div className="overflow-x-auto flex-1">
                         <table className="w-full text-left text-sm text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
                             <thead className="bg-zinc-50/80 dark:bg-zinc-900/50 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
@@ -170,7 +166,6 @@ export default function CouponsIndex({ coupons, filters }: { coupons: any, filte
                         </div>
                     )}
                 </div>
-            </div>
         </AdminLayout>
     );
 }

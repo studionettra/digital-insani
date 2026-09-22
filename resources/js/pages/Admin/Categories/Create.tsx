@@ -1,8 +1,9 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import AdminLayout from '@/layouts/AdminLayout';
+import { PageHeader } from '@/components/page-header';
 import { TrixEditor } from '@/components/ui/trix-editor';
 import { ArrowLeft, Save } from 'lucide-react';
+import admin from '@/routes/admin';
 
 export default function CreateCategory() {
     const { data, setData, post, processing, errors } = useForm({
@@ -17,38 +18,30 @@ export default function CreateCategory() {
         post('/admin/categories');
     };
 
-    return (
-        <AdminLayout>
-            <Head title="Tambah Kategori | Admin" />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: '/admin/dashboard' },
-                    { title: 'Kategori', href: '/admin/categories' },
-                    { title: 'Tambah', href: '#' },
-                ]}
-            />
-            
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 lg:p-10 max-w-5xl mx-auto w-full">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div className="flex items-center gap-3">
-                        <Link
-                            href="/admin/categories"
-                            className="p-2 -ml-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors text-zinc-500"
-                        >
-                            <ArrowLeft className="w-5 h-5" />
-                        </Link>
-                        <div>
-                            <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2">
-                                Tambah Kategori Baru
-                            </h1>
-                            <p className="text-lg text-zinc-500 dark:text-zinc-400">
-                                Buat kategori baru untuk mengelompokkan produk dan artikel Anda.
-                            </p>
-                        </div>
-                    </div>
-                </div>
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Kategori', href: admin.categories.index() },
+        { title: 'Tambah', href: '#' },
+    ];
 
-                <div className="bento-card border-none ring-1 ring-border shadow-sm p-6 lg:p-8">
+    return (
+        <AdminLayout breadcrumbs={breadcrumbs}>
+            <Head title="Tambah Kategori | Admin" />
+
+            <PageHeader
+                title="Tambah Kategori Baru"
+                description="Buat kategori baru untuk mengelompokkan produk dan artikel Anda."
+            >
+                <Link
+                    href={admin.categories.index()}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
+                >
+                    <ArrowLeft className="size-4" />
+                    Kembali
+                </Link>
+            </PageHeader>
+
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6 lg:p-8">
                     <form onSubmit={submit} className="space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -131,7 +124,6 @@ export default function CreateCategory() {
                         </div>
                     </form>
                 </div>
-            </div>
         </AdminLayout>
     );
 }

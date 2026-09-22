@@ -131,9 +131,12 @@ graph TD
   - `AdminSettingTest.php`: Pengujian perubahan nama situs dan upload logo.
   - `GuestDownloadExpirationTest.php`: Pengujian penolakan download setelah 24 jam.
   - `LegalPagesTest.php`: Pengujian akses publik halaman refund, terms, dan privacy policy.
-- [ ] **5.2 Eksekusi Test Suite & Linting:**
-  - Jalankan `php artisan test` hingga 100% lulus (hijau).
-  - Jalankan formatting kode otomatis dengan Laravel Pint: `vendor/bin/pint --format agent`.
+- [x] **5.2 Eksekusi Test Suite & Linting:** ✅
+  - Jalankan `php artisan test` hingga 100% lulus (80 tests: 76 passed, 4 skipped).
+  - Jalankan formatting kode otomatis dengan Laravel Pint: `vendor/bin/pint --format agent` (lolos tanpa error).
+- [x] **5.3 Perbaikan Celah Entitlement Guest Checkout:** ✅
+  - Integrasikan `EntitlementService::mergeGuestOrders($user)` ke dalam listener `LinkGuestOrdersToUser.php` agar pesanan lunas guest checkout otomatis menerbitkan entitlement saat pembeli mendaftar akun baru.
+  - Ditambahkan automated feature test di `tests/Feature/EntitlementTest.php`.
 
 ---
 

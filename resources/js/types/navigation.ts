@@ -13,3 +13,9 @@ export type NavItem = {
     isActive?: boolean;
     badge?: string | number;
 };
+
+export type NavGroup = {
+    title?: string;
+    items: NavItem[];
+};
+

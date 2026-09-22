@@ -3,7 +3,7 @@
 namespace App\Listeners;
 
 use App\Models\CartItem;
-use App\Models\Order;
+use App\Services\EntitlementService;
 use Illuminate\Auth\Events\Registered;
 
 class LinkGuestOrdersToUser
@@ -11,10 +11,9 @@ class LinkGuestOrdersToUser
     /**
      * Create the event listener.
      */
-    public function __construct()
-    {
-        //
-    }
+    public function __construct(
+        public EntitlementService $entitlementService
+    ) {}
 
     /**
      * Handle the event.
@@ -23,17 +22,8 @@ class LinkGuestOrdersToUser
     {
         $user = $event->user;
 
-        // Find all guest orders matching email or phone
-        Order::whereNull('user_id')
-            ->where(function ($query) use ($user) {
-                $query->where('customer_email', $user->email);
-                if (! empty($user->phone)) {
-                    $query->orWhere('customer_phone', $user->phone);
-                }
-            })
-            ->update([
-                'user_id' => $user->id,
-            ]);
+        // Merge guest orders and grant entitlements for paid orders
+        $this->entitlementService->mergeGuestOrders($user);
 
         // Also update any guest cart items if they exist
         $sessionId = session()->getId();

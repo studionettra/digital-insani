@@ -1,7 +1,7 @@
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, CreditCard, Download, User, Package, Calendar } from 'lucide-react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { ArrowLeft, CreditCard, User, Package, Calendar } from 'lucide-react';
 import AdminLayout from '@/layouts/AdminLayout';
+import admin from '@/routes/admin';
 
 export default function OrdersShow({ order }: { order: any }) {
     const getStatusBadge = (status: string) => {
@@ -21,18 +21,17 @@ export default function OrdersShow({ order }: { order: any }) {
         );
     };
 
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Pesanan', href: admin.orders.index() },
+        { title: order.order_number, href: '#' },
+    ];
+
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={breadcrumbs}>
             <Head title={`Pesanan ${order.order_number} | Admin`} />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: '/admin/dashboard' },
-                    { title: 'Pesanan', href: '/admin/orders' },
-                    { title: order.order_number, href: '#' },
-                ]}
-            />
             
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 lg:p-10">
+            <div>
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between max-w-5xl">
                     <div className="flex items-center gap-4">
                         <Link href="/admin/orders" className="p-2 rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
@@ -57,7 +56,7 @@ export default function OrdersShow({ order }: { order: any }) {
                     {/* Main Info */}
                     <div className="lg:col-span-2 space-y-8">
                         {/* Items */}
-                        <div className="bento-card p-6">
+                        <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6">
                             <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                                 <Package className="w-5 h-5" /> Produk Dibeli
                             </h3>
@@ -93,7 +92,7 @@ export default function OrdersShow({ order }: { order: any }) {
                         </div>
 
                         {/* Webhook Events */}
-                        <div className="bento-card p-6">
+                        <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6">
                             <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-4">Riwayat Pembayaran (Webhook)</h3>
                             {order.webhook_events && order.webhook_events.length > 0 ? (
                                 <div className="space-y-4">
@@ -118,7 +117,7 @@ export default function OrdersShow({ order }: { order: any }) {
                     {/* Sidebar Info */}
                     <div className="space-y-8">
                         {/* Customer */}
-                        <div className="bento-card p-6">
+                        <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6">
                             <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                                 <User className="w-5 h-5" /> Data Pelanggan
                             </h3>
@@ -153,7 +152,7 @@ export default function OrdersShow({ order }: { order: any }) {
                         </div>
 
                         {/* Payment */}
-                        <div className="bento-card p-6">
+                        <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6">
                             <h3 className="text-lg font-medium text-zinc-900 dark:text-white mb-4 flex items-center gap-2">
                                 <CreditCard className="w-5 h-5" /> Informasi Pembayaran
                             </h3>

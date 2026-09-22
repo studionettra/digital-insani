@@ -1,7 +1,6 @@
 import { Head, useForm, Link } from '@inertiajs/react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import AdminLayout from '@/layouts/AdminLayout';
-import Heading from '@/components/heading';
+import { PageHeader } from '@/components/page-header';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -9,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { TrixEditor } from '@/components/ui/trix-editor';
 import { ArrowLeft, Save } from 'lucide-react';
 import InputError from '@/components/input-error';
+import admin from '@/routes/admin';
 
 type Category = {
     id: number;
@@ -31,32 +31,30 @@ export default function EditCategory({ category }: { category: Category }) {
         put(`/admin/categories/${category.id}`);
     };
 
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Kategori', href: admin.categories.index() },
+        { title: 'Edit', href: '#' },
+    ];
+
     return (
-        <AdminLayout>
+        <AdminLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Kategori | Admin" />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: '/admin/dashboard' },
-                    { title: 'Kategori', href: '/admin/categories' },
-                    { title: 'Edit', href: '#' },
-                ]}
-            />
-            
-            <div className="flex-1 overflow-y-auto px-4 py-6 md:px-8 max-w-5xl mx-auto w-full">
-                <div className="mb-6 flex items-center gap-4">
-                    <Link
-                        href="/admin/categories"
-                        className="inline-flex h-9 w-9 items-center justify-center rounded-md border border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-100 dark:border-zinc-800 dark:bg-zinc-950 dark:hover:bg-zinc-800"
-                    >
-                        <ArrowLeft className="h-4 w-4" />
-                        <span className="sr-only">Kembali</span>
-                    </Link>
-                    <Heading
-                        title="Edit Kategori"
-                        description="Ubah informasi kategori ini."
-                        variant="small"
-                    />
-                </div>
+
+            <PageHeader
+                title="Edit Kategori"
+                description="Ubah informasi kategori ini."
+            >
+                <Link
+                    href={admin.categories.index()}
+                    className="inline-flex items-center gap-1.5 rounded-xl border border-border/80 bg-white dark:bg-zinc-900 px-3 py-2 text-sm font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-colors shadow-2xs"
+                >
+                    <ArrowLeft className="size-4" />
+                    Kembali
+                </Link>
+            </PageHeader>
+
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs p-6 lg:p-8 max-w-3xl">
 
                 <form onSubmit={submit} className="mt-8 space-y-10">
                     
@@ -128,7 +126,6 @@ export default function EditCategory({ category }: { category: Category }) {
                     </div>
 
                 </form>
-            </div>
         </AdminLayout>
     );
 }

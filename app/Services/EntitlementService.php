@@ -93,7 +93,12 @@ class EntitlementService
     public function mergeGuestOrders(User $user): int
     {
         $guestOrders = Order::whereNull('user_id')
-            ->where('customer_email', $user->email)
+            ->where(function ($query) use ($user) {
+                $query->where('customer_email', $user->email);
+                if (! empty($user->phone)) {
+                    $query->orWhere('customer_phone', $user->phone);
+                }
+            })
             ->get();
 
         $mergedCount = 0;

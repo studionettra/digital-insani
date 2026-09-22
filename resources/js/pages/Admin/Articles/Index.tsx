@@ -1,35 +1,33 @@
 import { Head, Link } from '@inertiajs/react';
 import { Plus, Edit, Trash2 } from 'lucide-react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
 import AdminLayout from '@/layouts/AdminLayout';
+import { PageHeader } from '@/components/page-header';
+import admin from '@/routes/admin';
 
 export default function ArticlesIndex({ articles }: { articles: any }) {
-    return (
-        <AdminLayout>
-            <Head title="Kelola Artikel | Admin" />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: '/admin/dashboard' },
-                    { title: 'Artikel', href: '#' },
-                ]}
-            />
-            
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 lg:p-10">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full">
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2">Daftar Artikel</h1>
-                        <p className="text-lg text-zinc-500 dark:text-zinc-400">Kelola postingan artikel dan panduan Anda di sini.</p>
-                    </div>
-                    <Link
-                        href="/admin/articles/create"
-                        className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-                    >
-                        <Plus className="mr-2 h-5 w-5" />
-                        Tambah Artikel
-                    </Link>
-                </div>
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Artikel SEO', href: admin.articles.index() },
+    ];
 
-                <div className="rounded-xl border border-zinc-200 bg-white shadow-sm dark:border-zinc-800 dark:bg-zinc-900 overflow-hidden">
+    return (
+        <AdminLayout breadcrumbs={breadcrumbs}>
+            <Head title="Kelola Artikel | Admin" />
+
+            <PageHeader
+                title="Daftar Artikel SEO"
+                description="Kelola postingan artikel dan panduan Anda di sini."
+            >
+                <Link
+                    href="/admin/articles/create"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-zinc-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 transition-colors"
+                >
+                    <Plus className="size-4" />
+                    Tambah Artikel
+                </Link>
+            </PageHeader>
+
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs overflow-hidden">
                     <div className="overflow-x-auto">
                         <table className="w-full text-left text-sm text-zinc-500 dark:text-zinc-400">
                             <thead className="bg-zinc-50/50 text-xs uppercase text-zinc-700 dark:bg-zinc-800/50 dark:text-zinc-400 border-b border-zinc-200 dark:border-zinc-800">
@@ -105,7 +103,6 @@ export default function ArticlesIndex({ articles }: { articles: any }) {
                         </div>
                     )}
                 </div>
-            </div>
         </AdminLayout>
     );
 }

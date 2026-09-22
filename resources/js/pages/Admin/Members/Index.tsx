@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
-import { Plus, Edit, Trash2 } from 'lucide-react';
-import { AppSidebarHeader } from '@/components/app-sidebar-header';
+import { Plus, Edit, Trash2, Users } from 'lucide-react';
 import AdminLayout from '@/layouts/AdminLayout';
+import { PageHeader } from '@/components/page-header';
+import admin from '@/routes/admin';
 
 export default function MembersIndex({ members }: { members: any }) {
     const handleDelete = (id: number) => {
@@ -10,32 +11,29 @@ export default function MembersIndex({ members }: { members: any }) {
         }
     };
 
-    return (
-        <AdminLayout>
-            <Head title="Kelola Member | Admin" />
-            <AppSidebarHeader
-                breadcrumbs={[
-                    { title: 'Admin Dashboard', href: '/admin/dashboard' },
-                    { title: 'Member', href: '#' },
-                ]}
-            />
-            
-            <div className="flex h-full flex-1 flex-col gap-8 p-6 lg:p-10">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between w-full">
-                    <div>
-                        <h1 className="text-3xl md:text-4xl font-semibold tracking-tight text-zinc-900 dark:text-white mb-2">Daftar Member</h1>
-                        <p className="text-lg text-zinc-500 dark:text-zinc-400">Lihat dan kelola seluruh pengguna di platform Anda.</p>
-                    </div>
-                    <Link
-                        href="/admin/members/create"
-                        className="inline-flex items-center justify-center rounded-full bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-sm shadow-primary/20 hover:bg-primary/90 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 transition-all duration-200"
-                    >
-                        <Plus className="mr-2 h-5 w-5" />
-                        Tambah Member
-                    </Link>
-                </div>
+    const breadcrumbs = [
+        { title: 'Admin Dashboard', href: admin.dashboard() },
+        { title: 'Data Member', href: admin.members.index() },
+    ];
 
-                <div className="bento-card border-none ring-1 ring-border shadow-sm flex flex-col min-h-0">
+    return (
+        <AdminLayout breadcrumbs={breadcrumbs}>
+            <Head title="Kelola Member | Admin" />
+
+            <PageHeader
+                title="Daftar Member"
+                description="Lihat dan kelola seluruh pengguna di platform Anda."
+            >
+                <Link
+                    href="/admin/members/create"
+                    className="inline-flex items-center gap-1.5 rounded-xl bg-zinc-900 px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-zinc-800 dark:bg-primary dark:text-primary-foreground dark:hover:bg-primary/90 transition-colors"
+                >
+                    <Plus className="size-4" />
+                    Tambah Member
+                </Link>
+            </PageHeader>
+
+            <div className="rounded-2xl border border-border/70 bg-white dark:bg-zinc-900/80 shadow-2xs overflow-hidden">
                     <div className="overflow-x-auto flex-1">
                         <table className="w-full text-left text-sm text-zinc-600 dark:text-zinc-400 whitespace-nowrap">
                             <thead className="bg-zinc-50/80 dark:bg-zinc-900/50 text-xs font-semibold uppercase tracking-wider text-zinc-500 dark:text-zinc-500">
@@ -126,7 +124,6 @@ export default function MembersIndex({ members }: { members: any }) {
                         </div>
                     )}
                 </div>
-            </div>
         </AdminLayout>
     );
 }
