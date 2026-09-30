@@ -126,6 +126,7 @@ export default function EditCategory({ category }: { category: Category }) {
                     </div>
 
                 </form>
+            </div>
         </AdminLayout>
     );
 }
