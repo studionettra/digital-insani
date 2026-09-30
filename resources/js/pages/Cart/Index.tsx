@@ -163,6 +163,17 @@ export default function CartIndex({ cartItems }: { cartItems: CartItem[] }) {
                                             <p className="text-sm text-zinc-500 dark:text-zinc-400 mt-1">Lengkapi data di bawah ini untuk menerima pesanan Anda.</p>
                                         </div>
                                     </div>
+
+                                    {/* Email Safety Alert */}
+                                    <div className="mb-6 p-4 rounded-2xl bg-amber-50 dark:bg-amber-950/20 border border-amber-200/80 dark:border-amber-800/50 flex items-start gap-3">
+                                        <div className="p-1 bg-amber-100 dark:bg-amber-900/40 rounded-lg text-amber-700 dark:text-amber-400 shrink-0 mt-0.5">
+                                            <Ticket className="w-4 h-4" />
+                                        </div>
+                                        <p className="text-xs sm:text-sm text-amber-800 dark:text-amber-300 leading-relaxed">
+                                            <strong>Perhatian:</strong> Pastikan alamat email Anda aktif dan benar. Tautan unduhan berkas dan invoice akan dikirimkan otomatis ke alamat email ini setelah transaksi berhasil.
+                                        </p>
+                                    </div>
+
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                         <div className="sm:col-span-2">
                                             <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-400 mb-2 uppercase tracking-wider">Nama Lengkap</label>
@@ -269,22 +280,40 @@ export default function CartIndex({ cartItems }: { cartItems: CartItem[] }) {
                                 </p>
 
                                 <button
-                                        type="submit"
-                                        disabled={checkoutProcessing}
-                                        className="w-full flex items-center justify-center rounded-full bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all active:scale-[0.98] disabled:opacity-70"
-                                    >
-                                        {checkoutProcessing ? (
-                                            <>
-                                                <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" />
-                                                Memproses...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Lanjutkan Pembayaran
-                                                <ArrowRight className="ml-2 h-4 w-4" />
-                                            </>
-                                        )}
+                                    type="submit"
+                                    disabled={checkoutProcessing}
+                                    className="w-full flex items-center justify-center rounded-full bg-blue-600 px-6 py-4 text-base font-semibold text-white shadow-sm hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all active:scale-[0.98] disabled:opacity-70"
+                                >
+                                    {checkoutProcessing ? (
+                                        <>
+                                            <Loader2 className="animate-spin -ml-1 mr-2 h-5 w-5 text-white" />
+                                            Memproses...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Lanjutkan Pembayaran
+                                            <ArrowRight className="ml-2 h-4 w-4" />
+                                        </>
+                                    )}
                                 </button>
+
+                                {/* Midtrans Payment Badges */}
+                                <div className="mt-6 pt-6 border-t border-zinc-100 dark:border-zinc-800 text-center space-y-3">
+                                    <span className="text-[10px] font-bold text-zinc-400 uppercase tracking-wider block">
+                                        Didukung Pembayaran Resmi
+                                    </span>
+                                    <div className="flex flex-wrap items-center justify-center gap-1.5 text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">QRIS</span>
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">BCA VA</span>
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">Mandiri</span>
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">BNI</span>
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">GoPay</span>
+                                        <span className="px-2 py-0.5 rounded-md bg-zinc-100 dark:bg-zinc-800 border border-zinc-200/60 dark:border-zinc-700">ShopeePay</span>
+                                    </div>
+                                    <p className="text-[10px] text-zinc-400 dark:text-zinc-500">
+                                        Akses unduhan instan langsung setelah pembayaran terverifikasi.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </form>

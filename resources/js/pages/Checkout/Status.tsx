@@ -50,19 +50,31 @@ export default function CheckoutStatus({ order, purchaseEvent }: { order: any, p
                             {/* Product List */}
                             <div className="mt-8 text-left space-y-4 max-w-lg mx-auto">
                                 {order.items?.map((item: any) => (
-                                    <div key={item.id} className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-xl border border-zinc-100 dark:border-zinc-800">
+                                    <div key={item.id} className="flex items-center justify-between p-4 bg-zinc-50 dark:bg-zinc-800/50 rounded-2xl border border-zinc-100 dark:border-zinc-800">
                                         <div>
-                                            <h4 className="font-medium text-zinc-900 dark:text-white">{item.product?.title}</h4>
-                                            <span className="text-sm text-zinc-500 dark:text-zinc-400">{item.product_variation?.name}</span>
+                                            <h4 className="font-semibold text-zinc-900 dark:text-white">{item.product?.title}</h4>
+                                            <span className="text-xs text-blue-600 dark:text-blue-400 font-medium">{item.product_variation?.name}</span>
                                         </div>
                                         <a 
                                             href={`/orders/${order.id}/download/${item.id}?token=${order.access_token}`}
-                                            className="inline-flex shrink-0 items-center justify-center px-5 py-2.5 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                            className="inline-flex shrink-0 items-center justify-center px-5 py-2.5 text-xs font-bold text-white bg-blue-600 hover:bg-blue-700 rounded-xl shadow-xs transition-colors"
                                         >
-                                            Download
+                                            Download .ZIP
                                         </a>
                                     </div>
                                 ))}
+                            </div>
+
+                            {/* Next Steps Guide */}
+                            <div className="mt-8 p-5 rounded-2xl bg-zinc-50 dark:bg-zinc-800/40 border border-zinc-200/60 dark:border-zinc-800 text-left max-w-lg mx-auto space-y-3">
+                                <h4 className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
+                                    Langkah Selanjutnya (Panduan Cepat)
+                                </h4>
+                                <ol className="space-y-2 text-xs text-zinc-600 dark:text-zinc-400 list-decimal list-inside">
+                                    <li>Klik tombol <strong>Download .ZIP</strong> di atas untuk menyimpan berkas.</li>
+                                    <li>Ekstrak arsip dan baca berkas <code>README.md</code> untuk instruksi instalasi dan konfigurasi.</li>
+                                    <li>Salin nomor pesanan <strong>#{order.order_number}</strong> sebagai bukti lisensi Anda.</li>
+                                </ol>
                             </div>
                         </>
                     ) : order.status === 'failed' ? (
