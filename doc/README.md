@@ -30,6 +30,8 @@ AI Agent **wajib membaca** dokumen berikut sebelum coding:
 21. `21-design-system.md`
 22. `22-open-questions.md`
 23. `23-remaining-implementation-plan.md`
+24. `24-ui-ux-implemented-features.md`
+25. `25-ui-ux-future-recommendations.md`
 
 ## Source of truth
 
