@@ -10,6 +10,7 @@ export default function CreateProduct({ categories }: { categories: any[] }) {
         title: '',
         category_id: '',
         description: '',
+        demo_url: '',
         cover_image: null as File | null,
         variations: [
             { name: 'Lisensi Personal', price: '', delivery_type: 'file', product_file: null as File | null, file_url: '' }
@@ -129,6 +130,22 @@ export default function CreateProduct({ categories }: { categories: any[] }) {
                                     ))}
                                 </select>
                                 {errors.category_id && <p className="mt-2 text-sm text-red-600 font-medium">{errors.category_id}</p>}
+                            </div>
+
+                            <div>
+                                <label htmlFor="demo_url" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-2">
+                                    URL Live Demo (Opsional)
+                                </label>
+                                <input
+                                    id="demo_url"
+                                    type="url"
+                                    value={data.demo_url}
+                                    onChange={(e) => setData('demo_url', e.target.value)}
+                                    className="w-full rounded-xl border-zinc-200 shadow-sm focus:border-primary focus:ring-primary dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 transition-colors bg-zinc-50/50 hover:bg-zinc-50 focus:bg-white px-4 py-3"
+                                    placeholder="https://preview.digitalinsani.com/demo"
+                                />
+                                <p className="mt-1.5 text-xs text-zinc-500">Tautan preview interaktif atau situs live demo.</p>
+                                {errors.demo_url && <p className="mt-2 text-sm text-red-600 font-medium">{errors.demo_url}</p>}
                             </div>
 
                             <div>

@@ -40,6 +40,7 @@ class ProductController extends Controller
             'slug' => Str::slug($request->title).'-'.uniqid(),
             'category_id' => $request->category_id,
             'description' => $request->description,
+            'demo_url' => $request->demo_url,
             'cover_image' => $coverImagePath,
             'is_active' => true,
         ]);
@@ -86,6 +87,7 @@ class ProductController extends Controller
             'title' => $request->title,
             'category_id' => $request->category_id,
             'description' => $request->description,
+            'demo_url' => $request->demo_url,
         ];
 
         if ($request->hasFile('cover_image')) {

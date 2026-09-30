@@ -15,6 +15,7 @@ class Product extends Model
         'slug',
         'description',
         'cover_image',
+        'demo_url',
         'is_active',
     ];
 

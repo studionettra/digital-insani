@@ -17,6 +17,7 @@ export default function EditProduct({ product, categories }: { product: any, cat
         title: product.title || '',
         category_id: product.category_id?.toString() || '',
         description: product.description || '',
+        demo_url: product.demo_url || '',
         cover_image: null as File | null,
         variations: product.variations && product.variations.length > 0 
             ? product.variations.map((v: any) => ({
@@ -133,6 +134,19 @@ export default function EditProduct({ product, categories }: { product: any, cat
                                     </SelectContent>
                                 </Select>
                                 <InputError message={errors.category_id} />
+                            </div>
+
+                            <div className="grid gap-2 md:col-span-2">
+                                <Label htmlFor="demo_url">URL Live Demo (Opsional)</Label>
+                                <Input
+                                    id="demo_url"
+                                    type="url"
+                                    value={data.demo_url}
+                                    onChange={(e) => setData('demo_url', e.target.value)}
+                                    placeholder="https://preview.digitalinsani.com/demo"
+                                />
+                                <p className="text-xs text-muted-foreground">Tautan live demo atau preview interaktif.</p>
+                                <InputError message={errors.demo_url} />
                             </div>
 
                             <div className="grid gap-2 md:col-span-2">

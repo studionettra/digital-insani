@@ -18,6 +18,7 @@ class StoreProductRequest extends FormRequest
             'category_id' => 'required|exists:categories,id',
             'description' => 'nullable|string',
             'cover_image' => 'required|image|max:2048', // 2MB Max
+            'demo_url' => 'nullable|url|max:255',
 
             // Variations array
             'variations' => 'required|array|min:1',
