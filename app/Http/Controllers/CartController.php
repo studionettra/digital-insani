@@ -57,7 +57,11 @@ class CartController extends Controller
             }
             DB::commit();
 
-            return redirect()->back()->with('success', 'Product added to cart');
+            if ($request->boolean('buy_now')) {
+                return redirect()->route('cart.index');
+            }
+
+            return redirect()->back()->with('success', 'Produk berhasil ditambahkan ke keranjang.');
         } catch (\Throwable $th) {
             DB::rollBack();
 
