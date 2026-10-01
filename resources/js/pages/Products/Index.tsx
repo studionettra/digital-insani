@@ -1,7 +1,8 @@
 import { Head, Link, router } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
-import { ArrowRight, Search, X, SlidersHorizontal, ChevronLeft, ChevronRight, Zap } from 'lucide-react';
+import { ArrowRight, Search, X, SlidersHorizontal, ChevronLeft, ChevronRight, Zap, Heart, Star } from 'lucide-react';
 import { useState, FormEvent } from 'react';
+import { useWishlist } from '@/hooks/use-wishlist';
 
 type ProductVariation = {
     id: number;
@@ -21,6 +22,8 @@ type Product = {
         slug: string;
     };
     variations: ProductVariation[];
+    reviews_avg_rating?: number | null;
+    reviews_count?: number;
 };
 
 type Category = {
@@ -55,6 +58,7 @@ type Props = {
 };
 
 export default function Index({ products, categories = [], filters }: Props) {
+    const { isWishlisted, toggleWishlist } = useWishlist();
     const [searchTerm, setSearchTerm] = useState(filters.search || '');
 
     const handleSearch = (e: FormEvent) => {
@@ -265,10 +269,39 @@ export default function Index({ products, categories = [], filters }: Props) {
                                                         {product.category?.name || 'Aset Digital'}
                                                     </span>
                                                 </div>
+
+                                                {/* Wishlist Button */}
+                                                <div className="absolute top-3 right-3 z-10">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.preventDefault();
+                                                            e.stopPropagation();
+                                                            toggleWishlist(product.id, product.title);
+                                                        }}
+                                                        className={`p-2 rounded-full backdrop-blur-md shadow-xs transition-all hover:scale-110 active:scale-95 cursor-pointer ${
+                                                            isWishlisted(product.id)
+                                                                ? 'bg-rose-50/90 dark:bg-rose-950/90 text-rose-500 ring-1 ring-rose-200 dark:ring-rose-800'
+                                                                : 'bg-white/80 dark:bg-zinc-900/80 text-zinc-400 hover:text-rose-500'
+                                                        }`}
+                                                        title={isWishlisted(product.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                                                        aria-label="Wishlist"
+                                                    >
+                                                        <Heart className={`w-3.5 h-3.5 ${isWishlisted(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
+                                                    </button>
+                                                </div>
                                             </div>
 
                                             {/* Details */}
                                             <div className="flex flex-col flex-1 px-1">
+                                                {product.reviews_count && product.reviews_count > 0 ? (
+                                                    <div className="flex items-center gap-1 text-[11px] text-amber-500 font-semibold mb-1">
+                                                        <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                                        <span>{Number(product.reviews_avg_rating || 0).toFixed(1)}</span>
+                                                        <span className="text-zinc-400 font-normal">({product.reviews_count})</span>
+                                                    </div>
+                                                ) : null}
+
                                                 <h3 className="text-base md:text-lg font-semibold text-zinc-900 dark:text-zinc-50 leading-snug mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
                                                     {product.title}
                                                 </h3>
