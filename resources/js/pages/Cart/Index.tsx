@@ -1,7 +1,7 @@
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import GuestLayout from '@/layouts/GuestLayout';
 import { FormEvent, useState } from 'react';
-import { ShoppingBag, Trash2, ArrowRight, Ticket, Loader2, CheckCircle2, XCircle } from 'lucide-react';
+import { ShoppingBag, Trash2, ArrowRight, Ticket, Loader2, CheckCircle2, XCircle, Sparkles } from 'lucide-react';
 import { store as checkoutStore } from '@/routes/checkout';
 import { remove as cartRemove } from '@/routes/cart';
 import { validate as validateCoupon } from '@/routes/coupon';
@@ -10,6 +10,10 @@ import axios from 'axios';
 type CartItem = {
     id: number;
     quantity: number;
+    bundle_id?: number | null;
+    bundle_name?: string | null;
+    bundle_discount_percentage?: number;
+    effective_price?: number;
     product: {
         id: number;
         title: string;
@@ -27,14 +31,14 @@ type CartItem = {
 };
 
 export default function CartIndex({ cartItems }: { cartItems: CartItem[] }) {
-    const total = cartItems.reduce((sum, item) => sum + ((item.product_variation?.price || 0) * item.quantity), 0);
+    const total = cartItems.reduce((sum, item) => sum + ((item.effective_price ?? item.product_variation?.price ?? 0) * item.quantity), 0);
 
     const { auth } = usePage<any>().props;
     const { data, setData, post: checkoutPost, processing: checkoutProcessing, errors } = useForm({
         coupon_code: '',
-        customer_name: '',
-        customer_email: '',
-        customer_phone: ''
+        customer_name: auth?.user?.name || '',
+        customer_email: auth?.user?.email || '',
+        customer_phone: auth?.user?.phone || '',
     });
     const { delete: removeDelete, processing: removeProcessing } = useForm();
     const [discount, setDiscount] = useState<number>(0);
@@ -132,10 +136,25 @@ export default function CartIndex({ cartItems }: { cartItems: CartItem[] }) {
                                                         </span>
                                                     </div>
                                                 )}
+                                                {item.bundle_name && item.bundle_discount_percentage && (
+                                                    <div className="mt-2 flex items-center gap-1.5">
+                                                        <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 px-2 py-0.5 text-[10px] font-bold border border-blue-200/60 dark:border-blue-800">
+                                                            <Sparkles className="w-3 h-3 text-blue-600 dark:text-blue-400" />
+                                                            Paket: {item.bundle_name} (-{item.bundle_discount_percentage}%)
+                                                        </span>
+                                                    </div>
+                                                )}
                                             </div>
                                             <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between w-full sm:w-auto gap-4 sm:gap-2">
-                                                <div className="font-semibold text-lg text-zinc-900 dark:text-white whitespace-nowrap">
-                                                    Rp {new Intl.NumberFormat('id-ID').format((item.product_variation?.price || 0) * item.quantity)}
+                                                <div className="text-right">
+                                                    {item.bundle_discount_percentage && item.bundle_discount_percentage > 0 && (
+                                                        <div className="text-xs text-zinc-400 line-through">
+                                                            Rp {new Intl.NumberFormat('id-ID').format((item.product_variation?.price || 0) * item.quantity)}
+                                                        </div>
+                                                    )}
+                                                    <div className="font-semibold text-lg text-zinc-900 dark:text-white whitespace-nowrap">
+                                                        Rp {new Intl.NumberFormat('id-ID').format(((item.effective_price ?? item.product_variation?.price) || 0) * item.quantity)}
+                                                    </div>
                                                 </div>
                                                 <button
                                                     type="button"
@@ -211,6 +230,38 @@ export default function CartIndex({ cartItems }: { cartItems: CartItem[] }) {
                                             />
                                             {errors.customer_phone && <p className="text-red-500 text-xs mt-1.5 font-medium">{errors.customer_phone}</p>}
                                         </div>
+                                    </div>
+                                </div>
+                            )}
+
+                            {auth?.user && (
+                                <div className="bg-white dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 shadow-sm p-6 space-y-4">
+                                    <div className="flex flex-wrap items-center justify-between gap-3">
+                                        <div>
+                                            <span className="text-xs text-zinc-400 block mb-0.5">Checkout sebagai Member</span>
+                                            <p className="text-sm font-bold text-zinc-900 dark:text-white">
+                                                {auth.user.name} ({auth.user.email})
+                                            </p>
+                                        </div>
+                                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold bg-green-50 text-green-700 dark:bg-green-950/60 dark:text-green-400 border border-green-200 dark:border-green-800">
+                                            <CheckCircle2 className="w-3.5 h-3.5" />
+                                            Akun Terverifikasi
+                                        </span>
+                                    </div>
+                                    <div className="pt-2 border-t border-zinc-100 dark:border-zinc-800">
+                                        <label className="block text-[11px] font-bold text-zinc-600 dark:text-zinc-400 mb-1.5 uppercase tracking-wider">
+                                            No. WhatsApp untuk Notifikasi & Unduhan Instan (Opsional)
+                                        </label>
+                                        <input
+                                            type="text"
+                                            value={data.customer_phone}
+                                            onChange={e => setData('customer_phone', e.target.value)}
+                                            className="block w-full max-w-md px-4 py-2.5 rounded-xl border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-950/50 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm text-zinc-900 dark:text-white placeholder-zinc-400 transition-colors"
+                                            placeholder="Contoh: 081234567890"
+                                        />
+                                        <p className="text-xs text-zinc-500 mt-1">
+                                            Konfirmasi pesanan dan tautan unduhan instan akan dikirimkan otomatis ke WhatsApp Anda setelah transaksi selesai.
+                                        </p>
                                     </div>
                                 </div>
                             )}

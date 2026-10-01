@@ -14,8 +14,14 @@ class CartItem extends Model
         'session_id',
         'product_id',
         'product_variation_id',
+        'bundle_id',
         'quantity',
     ];
+
+    public function bundle()
+    {
+        return $this->belongsTo(ProductBundle::class, 'bundle_id');
+    }
 
     public function user()
     {

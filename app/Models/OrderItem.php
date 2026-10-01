@@ -13,9 +13,15 @@ class OrderItem extends Model
         'order_id',
         'product_id',
         'product_variation_id',
+        'bundle_id',
         'price',
         'quantity',
     ];
+
+    public function bundle()
+    {
+        return $this->belongsTo(ProductBundle::class, 'bundle_id');
+    }
 
     public function order()
     {
@@ -30,5 +36,10 @@ class OrderItem extends Model
     public function productVariation()
     {
         return $this->belongsTo(ProductVariation::class);
+    }
+
+    public function review()
+    {
+        return $this->hasOne(Review::class);
     }
 }
