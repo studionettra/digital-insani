@@ -2,7 +2,7 @@ import { Head, useForm, Link } from '@inertiajs/react';
 import AdminLayout from '@/layouts/AdminLayout';
 import { PageHeader } from '@/components/page-header';
 import { TrixEditor } from '@/components/ui/trix-editor';
-import { ArrowLeft, Save, Plus, Trash2, Layers } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, Layers, BookOpen, Code2 } from 'lucide-react';
 import admin from '@/routes/admin';
 
 export default function CreateProduct({ categories }: { categories: any[] }) {
@@ -12,6 +12,9 @@ export default function CreateProduct({ categories }: { categories: any[] }) {
         description: '',
         demo_url: '',
         cover_image: null as File | null,
+        preview_pdf: null as File | null,
+        code_snippet: '',
+        code_snippet_lang: 'php',
         variations: [
             { name: 'Lisensi Personal', price: '', delivery_type: 'file', product_file: null as File | null, file_url: '' }
         ],
@@ -167,6 +170,78 @@ export default function CreateProduct({ categories }: { categories: any[] }) {
                                 )}
                                 {errors.cover_image && <p className="mt-2 text-sm text-red-600 font-medium">{errors.cover_image}</p>}
                             </div>
+                        </div>
+                    </div>
+
+                    {/* Preview Assets: Cuplikan PDF & Code Sandbox */}
+                    <div className="p-6 lg:p-8 rounded-2xl bg-zinc-50/50 dark:bg-zinc-900/30 border border-zinc-200 dark:border-zinc-800 space-y-6">
+                        <div className="flex items-center gap-3">
+                            <div className="p-2.5 rounded-xl bg-rose-500/10 text-rose-600 dark:text-rose-400">
+                                <BookOpen className="w-5 h-5" />
+                            </div>
+                            <div>
+                                <h3 className="text-base font-semibold text-zinc-900 dark:text-white">Cuplikan Sampel & Sandbox (Opsional)</h3>
+                                <p className="text-sm text-zinc-500 dark:text-zinc-400">Tampilkan cuplikan dokumen atau kode arsitektur di halaman produk tanpa harus meninggalkan website.</p>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {/* Sampel PDF */}
+                            <div className="space-y-3">
+                                <label htmlFor="preview_pdf" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Unggah Berkas Sampel PDF (Excerpt)
+                                </label>
+                                <input
+                                    id="preview_pdf"
+                                    type="file"
+                                    accept=".pdf,application/pdf"
+                                    onChange={(e) => setData('preview_pdf', e.target.files ? e.target.files[0] : null)}
+                                    className="w-full rounded-xl border-zinc-200 shadow-sm focus:border-primary focus:ring-primary dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 transition-colors bg-white hover:bg-zinc-50 focus:bg-white px-4 py-3 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-rose-50 file:text-rose-600 hover:file:bg-rose-100 cursor-pointer"
+                                />
+                                <p className="text-xs text-zinc-500">Maksimal 10MB (.pdf). Calon pembeli dapat membaca sampel beberapa halaman lewat popup viewer interaktif.</p>
+                                {errors.preview_pdf && <p className="mt-2 text-sm text-red-600 font-medium">{errors.preview_pdf}</p>}
+                            </div>
+
+                            {/* Bahasa Cuplikan Kode */}
+                            <div className="space-y-3">
+                                <label htmlFor="code_snippet_lang" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                    Bahasa Pemrograman Cuplikan
+                                </label>
+                                <select
+                                    id="code_snippet_lang"
+                                    value={data.code_snippet_lang}
+                                    onChange={(e) => setData('code_snippet_lang', e.target.value)}
+                                    className="w-full rounded-xl border-zinc-200 shadow-sm focus:border-primary focus:ring-primary dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 transition-colors bg-white hover:bg-zinc-50 focus:bg-white px-4 py-3"
+                                >
+                                    <option value="php">PHP</option>
+                                    <option value="typescript">TypeScript</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="bash">Bash / Shell</option>
+                                    <option value="html">HTML / Blade</option>
+                                    <option value="sql">SQL</option>
+                                    <option value="json">JSON</option>
+                                </select>
+                                <p className="text-xs text-zinc-500">Label bahasa yang akan ditampilkan pada terminal sandbox.</p>
+                                {errors.code_snippet_lang && <p className="mt-2 text-sm text-red-600 font-medium">{errors.code_snippet_lang}</p>}
+                            </div>
+                        </div>
+
+                        {/* Cuplikan Kode Textarea */}
+                        <div className="space-y-2">
+                            <label htmlFor="code_snippet" className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">
+                                Isi Cuplikan Kode (Code Sandbox Demo)
+                            </label>
+                            <textarea
+                                id="code_snippet"
+                                rows={6}
+                                value={data.code_snippet}
+                                onChange={(e) => setData('code_snippet', e.target.value)}
+                                className="w-full font-mono text-sm rounded-xl border-zinc-200 shadow-sm focus:border-primary focus:ring-primary dark:border-zinc-800 dark:bg-zinc-950 dark:text-zinc-100 transition-colors bg-white hover:bg-zinc-50 focus:bg-white px-4 py-3 leading-relaxed"
+                                placeholder="// Contoh struktur class, cuplikan fungsi penting, atau integrasi API..."
+                            />
+                            <p className="text-xs text-zinc-500">Akan dirender dalam terminal mockup dengan tombol 1-klik salin kode.</p>
+                            {errors.code_snippet && <p className="text-sm text-red-600 font-medium">{errors.code_snippet}</p>}
                         </div>
                     </div>
 

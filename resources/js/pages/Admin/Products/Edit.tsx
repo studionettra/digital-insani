@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { TrixEditor } from '@/components/ui/trix-editor';
-import { ArrowLeft, Save, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Save, Plus, Trash2, BookOpen, Code2, ExternalLink } from 'lucide-react';
 import InputError from '@/components/input-error';
 
 export default function EditProduct({ product, categories }: { product: any, categories: any[] }) {
@@ -19,6 +19,9 @@ export default function EditProduct({ product, categories }: { product: any, cat
         description: product.description || '',
         demo_url: product.demo_url || '',
         cover_image: null as File | null,
+        preview_pdf: null as File | null,
+        code_snippet: product.code_snippet || '',
+        code_snippet_lang: product.code_snippet_lang || 'php',
         variations: product.variations && product.variations.length > 0 
             ? product.variations.map((v: any) => ({
                 id: v.id,
@@ -193,6 +196,88 @@ export default function EditProduct({ product, categories }: { product: any, cat
                                 <p className="text-xs text-muted-foreground mt-1">Kosongkan jika tidak ingin mengubah gambar.</p>
                                 <InputError message={errors.cover_image} />
                             </div>
+                        </div>
+                    </section>
+
+                    <Separator />
+
+                    {/* Preview Assets: Cuplikan Sampel PDF & Code Sandbox */}
+                    <section className="space-y-6">
+                        <Heading
+                            variant="small"
+                            title="Cuplikan Sampel & Code Sandbox (Opsional)"
+                            description="Tampilkan cuplikan dokumen atau kode arsitektur di halaman produk tanpa harus meninggalkan website."
+                        />
+
+                        <div className="grid gap-6 md:grid-cols-2">
+                            {/* Sampel PDF */}
+                            <div className="space-y-3">
+                                <Label htmlFor="preview_pdf">Unggah Berkas Sampel PDF (Excerpt)</Label>
+                                {product.preview_pdf && (
+                                    <div className="flex items-center gap-2 p-3 rounded-lg border border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900/50 text-xs">
+                                        <BookOpen className="w-4 h-4 text-rose-500 shrink-0" />
+                                        <span className="font-medium text-zinc-700 dark:text-zinc-300 truncate">
+                                            {product.preview_pdf}
+                                        </span>
+                                        <a
+                                            href={`/storage/${product.preview_pdf}`}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="ml-auto inline-flex items-center gap-1 text-blue-600 hover:underline shrink-0"
+                                        >
+                                            <ExternalLink className="w-3 h-3" />
+                                            Lihat
+                                        </a>
+                                    </div>
+                                )}
+                                <Input
+                                    id="preview_pdf"
+                                    type="file"
+                                    accept=".pdf,application/pdf"
+                                    onChange={(e) => setData('preview_pdf', e.target.files ? e.target.files[0] : null)}
+                                />
+                                <p className="text-xs text-muted-foreground">
+                                    {product.preview_pdf ? 'Unggah file PDF baru jika ingin mengganti sampel yang sudah ada (Max 10MB).' : 'Maksimal 10MB (.pdf). Calon pembeli dapat membaca sampel beberapa halaman lewat popup viewer interaktif.'}
+                                </p>
+                                <InputError message={errors.preview_pdf} />
+                            </div>
+
+                            {/* Bahasa Cuplikan Kode */}
+                            <div className="space-y-3">
+                                <Label htmlFor="code_snippet_lang">Bahasa Pemrograman Cuplikan</Label>
+                                <select
+                                    id="code_snippet_lang"
+                                    value={data.code_snippet_lang}
+                                    onChange={(e) => setData('code_snippet_lang', e.target.value)}
+                                    className="flex h-9 w-full rounded-md border border-input bg-transparent px-3 py-1 text-sm shadow-xs transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring dark:bg-zinc-950"
+                                >
+                                    <option value="php">PHP</option>
+                                    <option value="typescript">TypeScript</option>
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python">Python</option>
+                                    <option value="bash">Bash / Shell</option>
+                                    <option value="html">HTML / Blade</option>
+                                    <option value="sql">SQL</option>
+                                    <option value="json">JSON</option>
+                                </select>
+                                <p className="text-xs text-muted-foreground">Label bahasa yang akan ditampilkan pada terminal sandbox.</p>
+                                <InputError message={errors.code_snippet_lang} />
+                            </div>
+                        </div>
+
+                        {/* Cuplikan Kode Textarea */}
+                        <div className="space-y-2">
+                            <Label htmlFor="code_snippet">Isi Cuplikan Kode (Code Sandbox Demo)</Label>
+                            <textarea
+                                id="code_snippet"
+                                rows={6}
+                                value={data.code_snippet}
+                                onChange={(e) => setData('code_snippet', e.target.value)}
+                                className="w-full font-mono text-sm rounded-md border border-zinc-200 dark:border-zinc-800 bg-white dark:bg-zinc-950 px-3 py-2 leading-relaxed shadow-xs focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+                                placeholder="// Contoh struktur class, cuplikan fungsi penting, atau integrasi API..."
+                            />
+                            <p className="text-xs text-muted-foreground">Akan dirender dalam terminal mockup dengan tombol 1-klik salin kode.</p>
+                            <InputError message={errors.code_snippet} />
                         </div>
                     </section>
 

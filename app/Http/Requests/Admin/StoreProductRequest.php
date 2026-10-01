@@ -19,6 +19,9 @@ class StoreProductRequest extends FormRequest
             'description' => 'nullable|string',
             'cover_image' => 'required|image|max:2048', // 2MB Max
             'demo_url' => 'nullable|url|max:255',
+            'preview_pdf' => 'nullable|file|mimes:pdf|max:10240',
+            'code_snippet' => 'nullable|string|max:65535',
+            'code_snippet_lang' => 'nullable|string|max:50',
 
             // Variations array
             'variations' => 'required|array|min:1',

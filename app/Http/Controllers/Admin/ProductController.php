@@ -35,12 +35,20 @@ class ProductController extends Controller
     {
         $coverImagePath = $request->file('cover_image')->store('products/covers', 'public');
 
+        $previewPdfPath = null;
+        if ($request->hasFile('preview_pdf')) {
+            $previewPdfPath = $request->file('preview_pdf')->store('products/previews', 'public');
+        }
+
         $product = Product::create([
             'title' => $request->title,
             'slug' => Str::slug($request->title).'-'.uniqid(),
             'category_id' => $request->category_id,
             'description' => $request->description,
             'demo_url' => $request->demo_url,
+            'preview_pdf' => $previewPdfPath,
+            'code_snippet' => $request->code_snippet,
+            'code_snippet_lang' => $request->code_snippet_lang ?? 'php',
             'cover_image' => $coverImagePath,
             'is_active' => true,
         ]);
@@ -88,7 +96,16 @@ class ProductController extends Controller
             'category_id' => $request->category_id,
             'description' => $request->description,
             'demo_url' => $request->demo_url,
+            'code_snippet' => $request->code_snippet,
+            'code_snippet_lang' => $request->code_snippet_lang ?? 'php',
         ];
+
+        if ($request->hasFile('preview_pdf')) {
+            if ($product->preview_pdf) {
+                Storage::disk('public')->delete($product->preview_pdf);
+            }
+            $data['preview_pdf'] = $request->file('preview_pdf')->store('products/previews', 'public');
+        }
 
         if ($request->hasFile('cover_image')) {
             if ($product->cover_image) {
