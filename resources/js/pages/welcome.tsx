@@ -14,8 +14,11 @@ import {
     Code2, 
     Lock, 
     RefreshCw,
-    Download
+    Download,
+    Heart,
+    Star
 } from 'lucide-react';
+import { useWishlist } from '@/hooks/use-wishlist';
 
 type ProductVariation = {
     id: number;
@@ -33,6 +36,8 @@ type Product = {
         name: string;
     };
     variations: ProductVariation[];
+    reviews_avg_rating?: number | null;
+    reviews_count?: number;
 };
 
 type Category = {
@@ -48,6 +53,7 @@ type Props = {
 };
 
 export default function Welcome({ featuredProducts = [], categories = [] }: Props) {
+    const { isWishlisted, toggleWishlist } = useWishlist();
     const [heroSearch, setHeroSearch] = useState('');
     const [openFaq, setOpenFaq] = useState<number | null>(0);
 
@@ -360,8 +366,36 @@ export default function Welcome({ featuredProducts = [], categories = [] }: Prop
                                             ) : (
                                                 <div className="w-full h-full flex items-center justify-center text-zinc-400 text-xs font-mono">NO IMAGE</div>
                                             )}
+
+                                            {/* Wishlist Button */}
+                                            <div className="absolute top-3 right-3 z-10">
+                                                <button
+                                                    type="button"
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        e.stopPropagation();
+                                                        toggleWishlist(product.id, product.title);
+                                                    }}
+                                                    className={`p-2 rounded-full backdrop-blur-md shadow-xs transition-all hover:scale-110 active:scale-95 cursor-pointer ${
+                                                        isWishlisted(product.id)
+                                                            ? 'bg-rose-50/90 dark:bg-rose-950/90 text-rose-500 ring-1 ring-rose-200 dark:ring-rose-800'
+                                                            : 'bg-white/80 dark:bg-zinc-900/80 text-zinc-400 hover:text-rose-500'
+                                                    }`}
+                                                    title={isWishlisted(product.id) ? 'Hapus dari Wishlist' : 'Simpan ke Wishlist'}
+                                                    aria-label="Wishlist"
+                                                >
+                                                    <Heart className={`w-3.5 h-3.5 ${isWishlisted(product.id) ? 'fill-rose-500 text-rose-500' : ''}`} />
+                                                </button>
+                                            </div>
                                         </div>
                                         <div className="flex flex-col flex-1 px-1">
+                                            {product.reviews_count && product.reviews_count > 0 ? (
+                                                <div className="flex items-center gap-1 text-[11px] text-amber-500 font-semibold mb-1">
+                                                    <Star className="w-3 h-3 fill-amber-400 text-amber-400" />
+                                                    <span>{Number(product.reviews_avg_rating || 0).toFixed(1)}</span>
+                                                    <span className="text-zinc-400 font-normal">({product.reviews_count})</span>
+                                                </div>
+                                            ) : null}
                                             <span className="text-[11px] font-semibold text-blue-600 dark:text-blue-400 uppercase tracking-wider mb-1.5">
                                                 {product.category?.name || 'Aset Digital'}
                                             </span>

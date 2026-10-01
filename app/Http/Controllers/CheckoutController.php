@@ -9,6 +9,7 @@ use App\Models\OrderItem;
 use App\Models\SiteSetting;
 use App\Services\CouponService;
 use App\Services\MidtransService;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -28,7 +29,7 @@ class CheckoutController extends Controller
             ]);
         }
 
-        $cartItemsQuery = CartItem::with(['product', 'productVariation']);
+        $cartItemsQuery = CartItem::with(['product', 'productVariation', 'bundle.products']);
         if (auth()->check()) {
             $cartItemsQuery->where('user_id', auth()->id());
         } else {
@@ -42,9 +43,30 @@ class CheckoutController extends Controller
 
         DB::beginTransaction();
         try {
-            $subtotal = $cartItems->sum(function ($item) {
-                return $item->productVariation->price * $item->quantity;
-            });
+            $cartProductIds = $cartItems->pluck('product_id')->unique()->toArray();
+            $subtotal = 0;
+            $itemPrices = [];
+
+            foreach ($cartItems as $item) {
+                $price = $item->productVariation ? (float) $item->productVariation->price : 0;
+                $appliedBundleId = null;
+
+                if ($item->bundle_id && $item->bundle && $item->bundle->is_active) {
+                    $bundleProductIds = $item->bundle->products->pluck('id')->toArray();
+                    $isComplete = count(array_diff($bundleProductIds, $cartProductIds)) === 0;
+
+                    if ($isComplete) {
+                        $appliedBundleId = $item->bundle->id;
+                        $price = round($price * (1 - ($item->bundle->discount_percentage / 100)));
+                    }
+                }
+
+                $itemPrices[$item->id] = [
+                    'price' => $price,
+                    'bundle_id' => $appliedBundleId,
+                ];
+                $subtotal += ($price * $item->quantity);
+            }
 
             $discount = 0;
             $couponCode = $request->input('coupon_code');
@@ -68,7 +90,7 @@ class CheckoutController extends Controller
                 'access_token' => Str::uuid()->toString(),
                 'customer_name' => auth()->check() ? auth()->user()->name : $request->customer_name,
                 'customer_email' => auth()->check() ? auth()->user()->email : $request->customer_email,
-                'customer_phone' => auth()->check() ? auth()->user()->phone : $request->customer_phone,
+                'customer_phone' => auth()->check() ? ($request->customer_phone ?: auth()->user()->phone) : $request->customer_phone,
                 'order_number' => 'ORD-'.strtoupper(uniqid()),
                 'subtotal' => $subtotal,
                 'discount_amount' => $discount,
@@ -79,11 +101,17 @@ class CheckoutController extends Controller
             ]);
 
             foreach ($cartItems as $item) {
+                $calculated = $itemPrices[$item->id] ?? [
+                    'price' => $item->productVariation ? (float) $item->productVariation->price : 0,
+                    'bundle_id' => null,
+                ];
+
                 OrderItem::create([
                     'order_id' => $order->id,
                     'product_id' => $item->product_id,
                     'product_variation_id' => $item->product_variation_id,
-                    'price' => $item->productVariation->price,
+                    'bundle_id' => $calculated['bundle_id'],
+                    'price' => $calculated['price'],
                     'quantity' => $item->quantity,
                 ]);
             }
@@ -166,8 +194,38 @@ class CheckoutController extends Controller
         }
 
         return inertia('Checkout/Status', [
-            'order' => $order->load('items.product', 'items.productVariation'),
+            'order' => $order->load(['items.product', 'items.productVariation', 'items.review']),
             'purchaseEvent' => $purchaseEvent,
         ]);
+    }
+
+    public function downloadInvoice(Request $request, Order $order, ?string $token = null)
+    {
+        $isOwner = auth()->check() && auth()->id() === $order->user_id;
+        $isGuestWithToken = ($token === $order->access_token) || ($request->has('token') && $request->token === $order->access_token);
+        $isGuestWithSession = ! $order->user_id && session()->getId() === $order->session_id;
+
+        if (! $isOwner && ! $isGuestWithToken && ! $isGuestWithSession) {
+            abort(403, 'Anda tidak memiliki akses ke faktur pesanan ini.');
+        }
+
+        if ($order->status !== 'paid') {
+            abort(400, 'Faktur hanya dapat diunduh untuk pesanan yang telah lunas.');
+        }
+
+        $order->load(['items.product', 'items.productVariation', 'user']);
+
+        $user = $order->user ?: (object) [
+            'name' => $order->customer_name,
+            'email' => $order->customer_email,
+            'is_guest' => true,
+        ];
+
+        $pdf = Pdf::loadView('emails.orders.invoice', [
+            'order' => $order,
+            'user' => $user,
+        ]);
+
+        return $pdf->download("Invoice-{$order->order_number}.pdf");
     }
 }

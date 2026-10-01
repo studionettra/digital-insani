@@ -13,13 +13,20 @@ use App\Http\Controllers\Member\ProfileController;
 use App\Http\Controllers\Member\UpdateController;
 use App\Http\Controllers\MidtransWebhookController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\WishlistController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [ProductController::class, 'welcome'])->name('home');
 
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/products/{slug}', [ProductController::class, 'show'])->name('products.show');
+
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/toggle/{product}', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+Route::post('/wishlist/sync', [WishlistController::class, 'sync'])->name('wishlist.sync');
+Route::get('/wishlist/ids', [WishlistController::class, 'ids'])->name('wishlist.ids');
 
 Route::get('/articles', [ArticleController::class, 'index'])->name('articles.index');
 Route::get('/articles/{slug}', [ArticleController::class, 'show'])->name('articles.show');
@@ -60,12 +67,15 @@ Route::middleware(['auth', 'verified', 'prevent.back'])->group(function () {
 Route::middleware(['web'])->group(function () {
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart', [CartController::class, 'add'])->name('cart.add');
+    Route::post('/cart/bundle', [CartController::class, 'addBundle'])->name('cart.bundle');
     Route::delete('/cart/{cartItem}', [CartController::class, 'remove'])->name('cart.remove');
 
     Route::post('/checkout', [CheckoutController::class, 'store'])->name('checkout.store');
     Route::get('/checkout/{order}/status/{token?}', [CheckoutController::class, 'status'])->name('checkout.status');
+    Route::get('/checkout/{order}/invoice/{token?}', [CheckoutController::class, 'downloadInvoice'])->name('checkout.invoice');
     Route::get('/orders/{order}/download/{item}', GuestDownloadController::class)->name('guest.download');
     Route::post('/coupon/validate', [CouponController::class, 'validateCoupon'])->name('coupon.validate');
+    Route::post('/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 });
 
 Route::post('/webhook/midtrans', [MidtransWebhookController::class, 'handle'])->name('webhook.midtrans');

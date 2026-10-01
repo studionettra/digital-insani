@@ -16,6 +16,9 @@ class Product extends Model
         'description',
         'cover_image',
         'demo_url',
+        'preview_pdf',
+        'code_snippet',
+        'code_snippet_lang',
         'is_active',
     ];
 
@@ -42,5 +45,20 @@ class Product extends Model
     public function updates()
     {
         return $this->hasMany(ProductUpdate::class);
+    }
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function wishlists()
+    {
+        return $this->hasMany(Wishlist::class);
+    }
+
+    public function bundles()
+    {
+        return $this->belongsToMany(ProductBundle::class, 'bundle_product', 'product_id', 'bundle_id')->withTimestamps();
     }
 }

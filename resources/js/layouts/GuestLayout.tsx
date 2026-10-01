@@ -18,9 +18,12 @@ import {
     LogIn,
     UserPlus,
     LayoutDashboard,
-    Sparkles
+    Sparkles,
+    Heart,
 } from 'lucide-react';
+import { useWishlist } from '@/hooks/use-wishlist';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
+import CountdownTimer from '@/components/CountdownTimer';
 
 export default function GuestLayout({
     children,
@@ -28,6 +31,7 @@ export default function GuestLayout({
     children: React.ReactNode;
 }) {
     const { auth, cartItemCount, site_settings } = usePage<any>().props;
+    const { wishlistCount } = useWishlist();
     useFlashToast();
     const { resolvedAppearance, updateAppearance } = useAppearance();
     const [mobileOpen, setMobileOpen] = useState(false);
@@ -61,21 +65,24 @@ export default function GuestLayout({
         <div className="flex min-h-[100dvh] flex-col bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 font-sans antialiased selection:bg-blue-200 selection:text-blue-900 dark:selection:bg-blue-800 dark:selection:text-blue-50">
             {/* Top Promo Announcement Bar */}
             {!promoDismissed && (
-                <div className="relative bg-gradient-to-r from-blue-700 via-indigo-600 to-blue-600 text-white text-xs py-2 px-4 shadow-xs z-50 transition-all">
+                <div className="relative bg-gradient-to-r from-blue-700 via-indigo-700 to-indigo-800 text-white text-xs py-2 px-4 shadow-xs z-50 transition-all">
                     <div className="max-w-7xl mx-auto flex items-center justify-between gap-4">
-                        <div className="flex-1 flex items-center justify-center gap-2 text-center flex-wrap">
-                            <span className="inline-flex items-center gap-1 font-bold bg-white/20 px-2 py-0.5 rounded-full text-[10px] uppercase tracking-wider">
-                                <Sparkles className="w-3 h-3 text-amber-300" />
-                                Penawaran Terbatas
+                        <div className="flex-1 flex items-center justify-center gap-2.5 text-center flex-wrap">
+                            <span className="inline-flex items-center gap-1 font-bold bg-amber-400 text-zinc-950 px-2.5 py-0.5 rounded-full text-[10px] uppercase tracking-wider shadow-xs">
+                                <Sparkles className="w-3 h-3 text-zinc-950 fill-zinc-950" />
+                                {site_settings?.flash_sale?.discount_percentage ? `Diskon Kilat ${site_settings.flash_sale.discount_percentage}%` : 'Flash Sale'}
                             </span>
-                            <span className="text-blue-50 font-medium hidden sm:inline">
-                                Gunakan voucher diskon hemat saat checkout! • Unduhan Instan 24/7
+                            <span className="text-white font-medium text-xs hidden sm:inline">
+                                {site_settings?.flash_sale?.title || 'Promo Terbatas Digital Insani!'}
                             </span>
+                            {site_settings?.flash_sale?.ends_at && (
+                                <CountdownTimer targetDate={site_settings.flash_sale.ends_at} variant="banner" />
+                            )}
                             <Link 
                                 href="/products" 
-                                className="underline hover:text-white font-semibold inline-flex items-center gap-1 transition-opacity hover:opacity-90 ml-1"
+                                className="underline hover:text-amber-200 font-semibold inline-flex items-center gap-1 transition-colors ml-1 text-xs"
                             >
-                                Jelajahi Katalog &rarr;
+                                Belanja Sekarang &rarr;
                             </Link>
                         </div>
                         <button
@@ -132,6 +139,19 @@ export default function GuestLayout({
                         >
                             {resolvedAppearance === 'dark' ? <Sun className="w-5 h-5 text-amber-400" /> : <Moon className="w-5 h-5" />}
                         </button>
+
+                        <Link 
+                            href="/wishlist" 
+                            className="relative p-2 text-zinc-600 hover:text-rose-600 dark:text-zinc-400 dark:hover:text-rose-400 transition-colors rounded-full hover:bg-zinc-100 dark:hover:bg-zinc-800"
+                            aria-label="Wishlist Produk Favorit"
+                        >
+                            <Heart className="w-5 h-5" />
+                            {wishlistCount > 0 && (
+                                <span className="absolute top-0 right-0 inline-flex items-center justify-center w-4 h-4 text-[10px] font-bold leading-none text-white bg-rose-500 rounded-full border-2 border-white dark:border-zinc-950">
+                                    {wishlistCount}
+                                </span>
+                            )}
+                        </Link>
 
                         <Link 
                             href="/cart" 
@@ -218,6 +238,21 @@ export default function GuestLayout({
                                         >
                                             <FileText className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                                             Artikel & Berita
+                                        </Link>
+                                        <Link 
+                                            href="/wishlist" 
+                                            onClick={() => setMobileOpen(false)}
+                                            className="flex items-center justify-between px-3 py-3 rounded-2xl text-sm font-medium text-zinc-700 dark:text-zinc-300 hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <Heart className="w-4 h-4 text-rose-500" />
+                                                Wishlist Saya
+                                            </div>
+                                            {wishlistCount > 0 && (
+                                                <span className="px-2 py-0.5 text-xs font-semibold bg-rose-500 text-white rounded-full">
+                                                    {wishlistCount}
+                                                </span>
+                                            )}
                                         </Link>
                                         <Link 
                                             href="/cart" 
