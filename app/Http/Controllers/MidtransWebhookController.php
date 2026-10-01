@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Jobs\SendWhatsAppOrderNotification;
 use App\Mail\PaymentSuccessMail;
 use App\Models\Order;
 use App\Models\PaymentWebhookEvent;
@@ -135,6 +136,15 @@ class MidtransWebhookController extends Controller
             }
         } catch (\Throwable $e) {
             Log::error('Failed to send success email/invoice: '.$e->getMessage());
+        }
+
+        // Dispatch WhatsApp notification to customer if phone number exists
+        if (! empty($order->customer_phone)) {
+            try {
+                SendWhatsAppOrderNotification::dispatch($order->id);
+            } catch (\Throwable $e) {
+                Log::error('Failed to dispatch WhatsApp notification: '.$e->getMessage());
+            }
         }
     }
 }

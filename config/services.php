@@ -53,4 +53,10 @@ return [
         'secret_key' => env('TURNSTILE_SECRET_KEY'),
     ],
 
+    'whatsapp' => [
+        'provider' => env('WHATSAPP_PROVIDER', 'fonnte'),
+        'api_key' => env('WHATSAPP_API_KEY', ''),
+        'enabled' => env('WHATSAPP_NOTIFICATION_ENABLED', false),
+    ],
+
 ];
