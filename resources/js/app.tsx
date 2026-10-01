@@ -32,7 +32,7 @@ class ErrorBoundary extends React.Component<any, any> {
   }
 }
 
-const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
+const appName = import.meta.env.VITE_APP_NAME || 'Digital Insani';
 
 void createInertiaApp({
     title: (title) => (title ? `${title} - ${appName}` : appName),

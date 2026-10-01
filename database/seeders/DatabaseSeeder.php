@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use App\Models\Category;
 use App\Models\Product;
 use App\Models\ProductVariation;
+use App\Models\SiteSetting;
 use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -18,6 +19,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Default Site Settings
+        SiteSetting::set('site_name', 'Digital Insani');
+        SiteSetting::set('support_email', 'support@digitalinsani.com');
+        SiteSetting::set('contact_phone', '081234567890');
+
         // Admin User
         User::factory()->create([
             'name' => 'Admin Insani',

@@ -62,10 +62,16 @@ class HandleInertiaRequests extends Middleware
             'sidebarOpen' => ! $request->hasCookie('sidebar_state') || $request->cookie('sidebar_state') === 'true',
             'cartItemCount' => $cartItemCount,
             'site_settings' => [
-                'site_name' => SiteSetting::get('site_name', config('app.name')),
+                'site_name' => SiteSetting::get('site_name', config('app.name', 'Digital Insani')) ?: 'Digital Insani',
                 'logo_url' => SiteSetting::get('logo_url'),
                 'support_email' => SiteSetting::get('support_email'),
                 'contact_phone' => SiteSetting::get('contact_phone'),
+                'flash_sale' => [
+                    'is_active' => filter_var(SiteSetting::get('flash_sale_active', '1'), FILTER_VALIDATE_BOOLEAN),
+                    'title' => SiteSetting::get('flash_sale_title', '⚡ Flash Sale Spesial — Diskon Kilat Terbatas!'),
+                    'ends_at' => SiteSetting::get('flash_sale_ends_at', now()->addDays(2)->setTime(23, 59, 59)->toIso8601String()),
+                    'discount_percentage' => (int) SiteSetting::get('flash_sale_discount_percentage', '30'),
+                ],
             ],
         ];
     }
