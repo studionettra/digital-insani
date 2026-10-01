@@ -10,6 +10,7 @@ import {
     Ticket,
     History,
     Store,
+    Star,
 } from 'lucide-react';
 import AppLogo from '@/components/app-logo';
 import { NavMain } from '@/components/nav-main';
@@ -65,6 +66,11 @@ const adminNavGroups: NavGroup[] = [
                 title: 'Kupon Diskon',
                 href: admin.coupons.index(),
                 icon: Ticket,
+            },
+            {
+                title: 'Ulasan Produk',
+                href: '/admin/reviews',
+                icon: Star,
             },
         ],
     },
